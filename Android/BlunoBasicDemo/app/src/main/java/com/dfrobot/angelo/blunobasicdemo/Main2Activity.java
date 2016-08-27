@@ -34,11 +34,12 @@ public class Main2Activity extends BlunoLibrary {
     private StringBuffer str_read= new StringBuffer();
 
     private ImageButton buttonStart;
-
+    private ImageButton buttonStop;
     private String str_code = new String("");
     private ImageButton button3;
     private ImageButton button4;
     private ImageButton button_reverse;
+    private ImageButton button_drink;
     private Button buttonSound;
     private SeekBar barSound;
     private MediaPlayer music;
@@ -68,6 +69,8 @@ public class Main2Activity extends BlunoLibrary {
 
         serialSendText = (EditText) findViewById(R.id.serialSendText);            //initial the EditText of the sending data
         //
+        music = MediaPlayer.create(this, R.raw.konan);
+        music.setLooping(true);
 
         buttonStart = (ImageButton) findViewById(R.id.btn_start);
         buttonStart.setEnabled(false);
@@ -81,9 +84,12 @@ public class Main2Activity extends BlunoLibrary {
                     str_code = "1";
                     serialSend(str_code);
                    // buttonStart.setText("Stop");
-                    buttonStart.setImageResource(R.drawable.stop);
+                    buttonStart.setImageResource(R.drawable.stop1);
 
                     check_start = true;
+
+
+                        music.start();
 
                 }else
                 {
@@ -91,8 +97,21 @@ public class Main2Activity extends BlunoLibrary {
                     str_code = "2";
                     serialSend(str_code);
                  //   buttonStart.setText("Start");
-                    buttonStart.setImageResource(R.drawable.start);
+                    buttonStart.setImageResource(R.drawable.start1);
                     check_start = false;
+                    if (music.isPlaying()) {
+                        music.stop();
+                        try {
+                            music.prepare();
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        music.seekTo(0);
+
+
+                    }
                 }
 
 
@@ -100,19 +119,18 @@ public class Main2Activity extends BlunoLibrary {
         });
 
 
-
-        button3 = (ImageButton) findViewById(R.id.btn_3);
-        button3.setOnClickListener(new OnClickListener() {
+        buttonStop = (ImageButton) findViewById(R.id.btn_stop);
+        buttonStop.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 serialReceivedText.setText("");
-                str_code = "3";
+                str_code = "2";
                 serialSend(str_code);
             }
         });
-
-        button4 = (ImageButton) findViewById(R.id.btn_4);
-        button4.setOnClickListener(new OnClickListener() {
+        button3 = (ImageButton) findViewById(R.id.btn_3);
+        button3.setVisibility(View.INVISIBLE);
+        button3.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 serialReceivedText.setText("");
@@ -120,6 +138,30 @@ public class Main2Activity extends BlunoLibrary {
                 serialSend(str_code);
             }
         });
+
+        button4 = (ImageButton) findViewById(R.id.btn_4);
+        button4.setVisibility(View.INVISIBLE);
+        button4.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                serialReceivedText.setText("");
+                str_code = "5";
+                serialSend(str_code);
+            }
+        });
+
+        button_reverse = (ImageButton)findViewById(R.id.btn_reverse);
+        button_reverse.setVisibility(View.INVISIBLE);
+        button_reverse.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                serialReceivedText.setText("");
+                str_code = "3";
+                serialSend(str_code);
+            }
+        });
+        button_drink = (ImageButton)findViewById(R.id.btn_drink);
+        button_drink.setVisibility(View.INVISIBLE);
 
         music = MediaPlayer.create(this, R.raw.konan);
         music.setLooping(true);
@@ -227,18 +269,37 @@ public class Main2Activity extends BlunoLibrary {
             case isConnecting:
                 buttonScan.setText("Connecting");
                 buttonStart.setEnabled(false);
+
                 break;
             case isToScan:
                 buttonScan.setText("Scan");
                 buttonStart.setEnabled(false);
+                buttonStart.setVisibility(View.VISIBLE);
+                buttonStart.setImageResource(R.drawable.start1);
+                check_start = false;
+                button3.setVisibility(View.INVISIBLE);
+                button4.setVisibility(View.INVISIBLE);
+                button_reverse.setVisibility(View.INVISIBLE);
                 break;
             case isScanning:
                 buttonScan.setText("Scanning");
                 buttonStart.setEnabled(false);
+                buttonStart.setVisibility(View.VISIBLE);
+                buttonStart.setImageResource(R.drawable.start1);
+                check_start = false;
+                button3.setVisibility(View.INVISIBLE);
+                button4.setVisibility(View.INVISIBLE);
+                button_reverse.setVisibility(View.INVISIBLE);
                 break;
             case isDisconnecting:
                 buttonScan.setText("isDisconnecting");
                 buttonStart.setEnabled(false);
+                buttonStart.setVisibility(View.VISIBLE);
+                buttonStart.setImageResource(R.drawable.start1);
+                check_start = false;
+                button3.setVisibility(View.INVISIBLE);
+                button4.setVisibility(View.INVISIBLE);
+                button_reverse.setVisibility(View.INVISIBLE);
                 break;
             default:
                 break;
@@ -257,6 +318,8 @@ public class Main2Activity extends BlunoLibrary {
             button3 = (ImageButton) findViewById(R.id.btn_3);
             button4 = (ImageButton)findViewById(R.id.btn_4);
             button_reverse = (ImageButton)findViewById(R.id.btn_reverse);
+            buttonStart = (ImageButton) findViewById(R.id.btn_start);
+            button_drink = (ImageButton)findViewById(R.id.btn_drink);
          str_read.append(theString);
 
          if(str_read.indexOf("\n")>-1)
@@ -269,7 +332,7 @@ public class Main2Activity extends BlunoLibrary {
 
              if(sss.equals("startSpin"))
              {
-
+                buttonStart.setVisibility(View.INVISIBLE);
                  button3.setVisibility(View.INVISIBLE);
                  button4.setVisibility(View.INVISIBLE);
                  button_reverse.setVisibility(View.VISIBLE);
@@ -284,11 +347,15 @@ public class Main2Activity extends BlunoLibrary {
                  button3.setVisibility(View.INVISIBLE);
                  button4.setVisibility(View.INVISIBLE);
                  button_reverse.setVisibility(View.INVISIBLE);
-                 //
-                 buttonStart = (ImageButton)findViewById(R.id.btn_start);
-                 buttonStart.setImageResource(R.drawable.start);
+                 button_drink.setVisibility(View.VISIBLE);
+
+
+             }else if(sss.equals("hold"))
+             {
+                button_drink.setVisibility(View.INVISIBLE);
+                 buttonStart.setVisibility(View.VISIBLE);
+                 buttonStart.setImageResource(R.drawable.start1);
                  check_start = false;
-                //
              }
 
 

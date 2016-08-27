@@ -45,6 +45,9 @@ public abstract  class BlunoLibrary  extends Activity{
 		if (mConnectionState == connectionStateEnum.isConnected) {
 			//mSCharacteristic
 			mSCharacteristic.setValue(theString);
+			System.out.println("-----------msChracter");
+			System.out.println(theString);
+			System.out.println("----------------------");
 			mBluetoothLeService.writeCharacteristic(mSCharacteristic);
 		}
 	}
@@ -327,6 +330,7 @@ public abstract  class BlunoLibrary  extends Activity{
             	}
             	else if (mSCharacteristic==mSerialPortCharacteristic) {
             		onSerialReceived(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+
 				}
             	
             
